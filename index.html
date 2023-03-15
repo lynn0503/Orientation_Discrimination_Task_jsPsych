@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>greeting</title>
+
+    <script src="https://www.naodao.com/public/experiment/libs/jspsych-7/jspsych.js"></script>
+    <link rel="stylesheet" href="https://www.naodao.com/public/experiment/libs/jspsych-7/css/jspsych.css">
+
+    <!-- <script src="https://www.naodao.com/public/experiment/libs/plugin/plugin-xxxx.js"></script> -->
+    <script src="https://www.naodao.com/public/experiment/libs/plugin/plugin-html-keyboard-response.js"></script>
+
+    <script src="https://www.naodao.com/public/experiment/libs/extension/naodao-2021-12.js"></script>
+    <script src="https://www.naodao.com/public/experiment/libs/axios.min.js"></script>
+
+  </head>
+
+  <body></body>
+
+  <script>
+    const jsPsych = initJsPsych({
+      extensions: [
+        {type: Naodao}
+      ]
+    });
+
+    let instruction = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: '<p> Welcome to the experiment. <br> In the following experiment, please determine the direction of the greeting and respond with left or right arrow on the keyboard. <br>Press Space to begin.</p>',
+      choices: " ",
+      response_ends_trial: true
+    };
+
+    let end = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: "Thank you for participating. Press Space to exit.",
+      choices: " ",
+      trial_duration: 10000,
+      response_end_trial: true,
+      extensions: [
+        {type: Naodao}
+      ]
+    };
+
+
+    let conditions =[
+      {"degree": "85", "direction": "right", "img": './img/greeting_85.png'},
+      {"degree": "88.5", "direction": "right", "img": './img/greeting_885.png'},
+      {"degree": "89", "direction": "right", "img": './img/greeting_89.png'},
+      {"degree": "89.5", "direction": "right", "img": './img/greeting_895.png'},
+      {"degree": "89.9", "direction": "right", "img": './img/greeting_899.png'},
+      {"degree": "90.1", "direction": "left", "img": './img/greeting_901.png'},
+      {"degree": "90.5", "direction": "left", "img": './img/greeting_905.png'},
+      {"degree": "91", "direction": "left", "img": './img/greeting_91.png'},
+      {"degree": "91.5", "direction": "left", "img": './img/greeting_915.png'},
+      {"degree": "95", "direction": "left", "img": './img/greeting_95.png'}
+  ];
+
+    function show_greeting() {
+        img = `<img src="${jsPsych.timelineVariable('img')}">`;
+        return img;
+    };
+
+    let trial = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: show_greeting,
+      choices: ['ArrowLeft','ArrowRight'],
+      stimulus_duration: 500,
+      response_ends_trial: true,
+      data: {
+        degree: jsPsych.timelineVariable("degree"),
+        direction: jsPsych.timelineVariable("direction")
+      }
+    };
+
+    let fixation = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: "<p style='font-size: 48px'>+</p>",
+      response_end_trial: false,
+      trial_duration: 500
+    };
+
+    let trial_block = {
+      timeline: [fixation, trial],
+      repetition: 10,
+      randomize_order: true,
+      timeline_variables: conditions
+    };
+
+
+    let main_timeline = [instruction, trial_block, end];
+
+    jsPsych.run(main_timeline);
+
+  </script>
+</html>
